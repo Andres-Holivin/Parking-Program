@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Vehicle {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  date_up DateTime  @default(now())
+  Parking Parking[]
+}
+
+model ParkingStatus {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  date_up DateTime  @default(now())
+  Parking Parking[]
+}
+
+model Parking {
+  id                Int           @id @default(autoincrement())
+  vehicle_id        Int
+  vehicle           Vehicle       @relation(references: [id], fields: [vehicle_id])
+  plate             String
+  ticket            String
+  check_in          Int?
+  check_out         Int?
+  date_up           DateTime      @default(now())
+  parking_status_id Int
+  parking_status    ParkingStatus @relation(references: [id], fields: [parking_status_id])
+}
