@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
+const { prisma } = require('helper/db')
 
 const vehicles =[
     {name:"Car"},
@@ -8,7 +9,6 @@ const parkingStatus =[
     {name:"Parking"},
     {name:"Pay"}
 ]
-const prisma = new PrismaClient();
 async function main(){
     for(let vehicle of vehicles){
         await prisma.Vehicle.create({
