@@ -1,8 +1,9 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import base32 from "base32";
+import { prisma } from "helper/db";
 
 export default async function handler(req, res) {
-    const prisma = new PrismaClient();
+
     if (req.method === 'GET') {
         const timestampnow = Math.floor(Date.now() / 1000);
         const ticketDecode = base32.decode(req.query.ticket);
@@ -47,13 +48,20 @@ export default async function handler(req, res) {
         const timestampnow = Math.floor(Date.now() / 1000).toString();
         const result = await prisma.parking.update({
             where: {
-                id:req.body.id,
+                id: req.body.id,
             },
             data: {
                 check_out: req.body.check_out,
                 parking_status_id: 2
             }
         })
+        if (result === null) {
+            res.status(500).json({
+                result: result,
+                message: "No Data"
+            })
+            return
+        }
         res.status(200).json({
             result: result,
             message: "success"

@@ -9,6 +9,8 @@ import { addCheckIn, selectAllCheck } from "redux/features/checkSlice";
 import { FaBackspace } from "react-icons/fa";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import Clock from 'react-live-clock';
+import TableParking from "components/TableParking";
+import { changeReset, fetchParking, selectAllParking } from "redux/features/parkingSlice";
 
 const SelectVehicle = ({ vehicleData, field }) => {
     let content;
@@ -32,7 +34,7 @@ const DetailDialog = ({ data }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     useEffect(() => {
         onOpen();
-    }, []);
+    }, [onOpen]);
     console.log(data)
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -63,6 +65,15 @@ export default function CheckIn() {
             dispatch(fetchVehicle())
         }
     }, [dispatch, vehicleData.status]);
+    function changeParking() {
+        if (checkData.status === "succeeded" && checkData.type !== "check") {
+            {
+                dispatch(fetchParking({ page: 1, take: 10 }))
+                // dispatch(changeReset())
+            }
+        }
+    }
+    changeParking();
     return (
         <Layout>
             <VStack padding="4" gap="2">
@@ -71,6 +82,7 @@ export default function CheckIn() {
                     checkData.status === "loading"
                         ? toast({
                             title: "Loading",
+                            position:"bottom-right",
                             render: () => {
                                 <Spinner />
                             }
@@ -78,11 +90,13 @@ export default function CheckIn() {
                         (checkData.status === "succeeded") ? toast({
                             title: "Success",
                             status: "success",
+                            position:"bottom-right",
                             duration: 9000,
                             isClosable: true,
                         }) : (checkData.status === "failed") ? toast({
                             title: checkData.message,
                             status: "error",
+                            position:"bottom-right",
                             duration: 9000,
                             isClosable: true,
                         }) : <></>
@@ -94,16 +108,16 @@ export default function CheckIn() {
                         <Box></Box>
                     </Flex>
                 </Box>
-                <Grid templateColumns="6fr 4fr" flexDirection="row" gap="8" >
-                    <Box overflow="scroll">
-                        <ListVehicle />
-                    </Box>
-                    <Box>
-                        <Clock
-                            noSsr={true}
-                            format={'dddd, MMMM Do YYYY, HH:mm:ss'}
-                            ticking={true}
-                            timezone={'Asia/Jakarta'} />
+                <Grid flexDirection="row" gap="8" w="full" >
+                    <TableParking />
+                    <Box display="flex" justifyContent="center" flexDir="column" bg="ButtonFace" paddingX="56" paddingY="6" shadow="md" rounded="md" >
+                        <Center>
+                            <Clock
+                                noSsr={true}
+                                format={'dddd, MMMM Do YYYY, HH:mm:ss'}
+                                ticking={true}
+                                timezone={'Asia/Jakarta'} />
+                        </Center>
                         <Box m="4"></Box>
                         <Formik
                             initialValues={{

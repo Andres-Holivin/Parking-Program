@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client"
 import base32 from "base32";
-export default async function handler(req, res) {
-    const prisma = new PrismaClient();
+import { prisma } from "helper/db";
+export default async function handler(req, res) {    
     if (req.method === 'POST') {
         console.log(req.body);
         req.body.plate=req.body.plate.toString().toLowerCase();

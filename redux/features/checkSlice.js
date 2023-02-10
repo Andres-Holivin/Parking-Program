@@ -8,6 +8,7 @@ const initialState = {
     type: ""
 }
 export const addCheckIn = createAsyncThunk("post/CheckIn", async (body, thunkAPI) => {
+    console.log(body)
     try {
         const res = await axios.post("/api/CheckIn", body,)
         return res.data;
@@ -17,6 +18,7 @@ export const addCheckIn = createAsyncThunk("post/CheckIn", async (body, thunkAPI
 })
 export const payCheckOut = createAsyncThunk("post/PayCheckOut", async (body, thunkAPI) => {
     try {
+        console.log(body)
         const res = await axios.post("/api/CheckOut", body,)
         return res.data;
     } catch (err) {
@@ -25,6 +27,7 @@ export const payCheckOut = createAsyncThunk("post/PayCheckOut", async (body, thu
 })
 export const checkTicket = createAsyncThunk("get/CheckTicket", async (body, thunkAPI) => {
     try {
+        console.log(body)
         const res = await axios.get("/api/CheckOut", { params: body })
         return res.data;
     } catch (err) {
@@ -53,7 +56,7 @@ export const checkSlice = createSlice({
             state.message = action.payload.error.data.message
             state.type = "CheckIn";
         })
-        builder.addCase(payCheckOut.pending, (state) => {
+        builder.addCase(payCheckOut.pending, (state) => {            
             state.status = "loading"
             state.type = "pay";
         })
@@ -80,6 +83,7 @@ export const checkSlice = createSlice({
             state.type = "check";
         })
         builder.addCase(checkTicket.rejected, (state, action) => {
+            console.log(state)
             state.status = "failed"
             state.data = action.payload.error.data.result
             state.message = action.payload.error.data.message

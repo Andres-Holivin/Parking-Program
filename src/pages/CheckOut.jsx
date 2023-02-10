@@ -7,6 +7,8 @@ import { checkTicket, payCheckOut, selectAllCheck } from "redux/features/checkSl
 import { Field, Form, Formik } from "formik";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import Clock from 'react-live-clock';
+import TableParking from "components/TableParking";
+import { fetchParking } from "redux/features/parkingSlice";
 
 export default function CheckOut() {
     const checkData = useSelector(selectAllCheck)
@@ -15,6 +17,15 @@ export default function CheckOut() {
     useEffect(() => {
 
     });
+    function changeParking() {
+        if (checkData.status === "succeeded" && checkData.type !== "check") {
+            {
+                dispatch(fetchParking({ page: 1, take: 10 }))
+                // dispatch(changeReset())
+            }
+        }
+    }
+    changeParking();
     return (
         <Layout>
             <VStack padding="4" gap="2" >
@@ -22,17 +33,20 @@ export default function CheckOut() {
                     checkData.status === "loading"
                         ? toast({
                             title: "Loading",
+                            position:"bottom-right",
                             render: () => {
                                 <Spinner />
                             }
                         }) :
                         (checkData.status === "succeeded") ? toast({
-                            title: checkData.message,
+                            title: checkData.message||"Success",
+                            position:"bottom-right",
                             status: "success",
                             duration: 9000,
                             isClosable: true,
                         }) : (checkData.status === "failed") ? toast({
-                            title: checkData.message,
+                            title: checkData.message||"Error",
+                            position:"bottom-right",
                             status: "error",
                             duration: 9000,
                             isClosable: true,
@@ -45,16 +59,16 @@ export default function CheckOut() {
                         <Box></Box>
                     </Flex>
                 </Box>
-                <Grid templateColumns="6fr 4fr" flexDirection="row" gap="8" >
-                    <Box overflow="scroll">
-                        <ListVehicle />
-                    </Box>
-                    <Box>
-                        <Clock
-                            noSsr={true}
-                            format={'dddd, MMMM Do YYYY, HH:mm:ss'}
-                            ticking={true}
-                            timezone={'Asia/Jakarta'} />
+                <Grid flexDirection="row" gap="8" w="full">
+                    <TableParking />
+                    <Box display="flex" justifyContent="center" flexDir="column" bg="ButtonFace" paddingX="56" paddingY="6" shadow="md" rounded="md" >
+                        <Center>
+                            <Clock
+                                noSsr={true}
+                                format={'dddd, MMMM Do YYYY, HH:mm:ss'}
+                                ticking={true}
+                                timezone={'Asia/Jakarta'} />
+                        </Center>
                         <Box m="4"></Box>
                         <Formik
                             initialValues={{
@@ -65,9 +79,6 @@ export default function CheckOut() {
                                 if (val.plate && val.ticket) {
                                     dispatch(checkTicket({ plate: val.plate, ticket: val.ticket }))
                                     return;
-                                }
-                                if (checkData.status === "succeeded" || checkData.status === "failed") {
-                                    act.setSubmitting(false)
                                 }
                                 act.setErrors({
                                     plate: (val.plate === null || val.plate === "") ? "Vehicle Plate is Required" : false,
@@ -117,6 +128,17 @@ export default function CheckOut() {
                                         isLoading={checkData.status === 'loading' ? true : false}
                                         w="52" colorScheme="twitter"
                                         onClick={() => {
+                                            console.log(checkData)
+                                            if (!checkData.data ||checkData.data.length===0) {
+                                                toast({
+                                                    position:"bottom-right",
+                                                    title: "No Data",
+                                                    status: "error",
+                                                    duration: 9000,
+                                                    isClosable: true,
+                                                })
+                                                return
+                                            }else
                                             dispatch(payCheckOut({ id: checkData.data.id, check_out: checkData.data.check_out }))
                                         }}>Pay</Button>
                                 </Box>
