@@ -18,7 +18,32 @@ This Simple program to check in and check out from parking area.
 
 
 
-## Run Locally
+## Installation
+
+Install my-project with npm
+
+```bash
+  npm install
+  npx prisma db push
+  npx prisma db seed
+  npm run dev
+```
+
+(Optional) See SQLite Database Data
+
+```bash
+  npx prisma studio
+```
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`APP_ENV = "Development"`
+
+
+
+## Command Function
 Install dependencies
 
 ```bash
@@ -47,12 +72,4 @@ Run Code Locally
 ```bash
   npx prisma studio
 ```
-
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`APP_ENV = "Development"`
-
 
